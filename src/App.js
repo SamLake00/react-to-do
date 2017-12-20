@@ -7,11 +7,38 @@ class App extends Component {
     super(props);
     this.state = {
       todos: [
-        { description: 'Walk the cat', isCompleted: true },
+        /*{ description: 'Walk the cat', isCompleted: true },
         { description: 'Throw the dishes away', isCompleted: false },
-        { description: 'Buy new dishes', isCompleted: false }
-      ]
+        { description: 'Buy new dishes', isCompleted: false }*/
+      ],
+      newTodoDescription: '',
     };
+  }
+
+  deleteTodo(index) {
+    // load the todo array
+    // filter out the id
+    // update in a React way
+    const todos = this.state.todos.slice();
+    this.setState({ todos: todos.filter( todo => todo !== todos[index] ) });
+  }
+
+  handleChange(e) {
+    this.setState({ newTodoDescription: e.target.value })
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    if (!this.state.newTodoDescription) { return }
+    const newTodo = { description: this.state.newTodoDescription, isCompleted: false };
+    this.setState({ todos: [...this.state.todos, newTodo], newTodoDescription: '' });
+  }
+
+  toggleComplete(index) {
+    const todos = this.state.todos.slice();
+    const todo = todos[index];
+    todo.isCompleted = todo.isCompleted ? false : true;
+    this.setState({ todos: todos});
   }
 
   render() {
@@ -19,9 +46,13 @@ class App extends Component {
       <div className="App">
         <ul>
           { this.state.todos.map( (todo, index) =>
-            <ToDo key={ index } description={ todo.description } isCompleted={ todo.Completed } />
+            <ToDo key={ index } description={ todo.description } isCompleted={ todo.Completed } toggleComplete={ () => this.toggleComplete(index) } deleteTodo={ () => this.deleteTodo(index) }/>
           )}
         </ul>
+        <form onSubmit={ (e) => this.handleSubmit(e) }>
+          <input type="text" value={ this.state.newTodoDescription } onChange={ (e) => this.handleChange(e) } />
+          <input type="submit" />
+        </form>
       </div>
     );
   }
